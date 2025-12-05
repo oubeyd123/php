@@ -17,7 +17,7 @@ if($course_id == 0) {
     exit();
 }
 
-// Get course details
+// Récupérer les détails du cours
 $stmt = $conn->prepare("SELECT c.*, u.username as teacher_name, u.id as teacher_id 
                         FROM courses c 
                         JOIN users u ON c.teacher_id = u.id 
@@ -34,7 +34,7 @@ if($result->num_rows == 0) {
 $course = $result->fetch_assoc();
 $is_teacher = ($course['teacher_id'] == $user_id);
 
-// Check if student is enrolled
+// Vérifier si l'étudiant est inscrit
 $is_enrolled = false;
 if($role === 'student') {
     $stmt = $conn->prepare("SELECT id FROM enrollments WHERE course_id = ? AND student_id = ?");
@@ -43,7 +43,7 @@ if($role === 'student') {
     $is_enrolled = $stmt->get_result()->num_rows > 0;
 }
 
-// Handle enrollment
+// Gérer l'inscription
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
     if($role === 'student' && !$is_enrolled) {
         $stmt = $conn->prepare("INSERT INTO enrollments (course_id, student_id, enrolled_at) VALUES (?, ?, NOW())");
@@ -56,7 +56,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
     }
 }
 
-// Handle new post/announcement
+// Gérer une nouvelle publication/annonce
 $post_success = false;
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_post']) && $is_teacher) {
     $title = trim($_POST['post_title']);
@@ -73,7 +73,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_post']) && $is_t
     }
 }
 
-// Get all posts (announcements) and assignments for the stream
+// Récupérer toutes les publications (annonces) et devoirs pour le flux
 $stream_query = "
     (SELECT 'announcement' as type, id, title, content as description, posted_by as author_id, created_at, NULL as due_date
      FROM announcements WHERE course_id = ?)
@@ -88,14 +88,14 @@ $stmt->bind_param("ii", $course_id, $course_id);
 $stmt->execute();
 $stream_items = $stmt->get_result();
 
-// Get enrolled students count
+// Récupérer le nombre d'étudiants inscrits
 $stmt = $conn->prepare("SELECT COUNT(*) as count FROM enrollments WHERE course_id = ?");
 $stmt->bind_param("i", $course_id);
 $stmt->execute();
 $student_count = $stmt->get_result()->fetch_assoc()['count'];
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -351,13 +351,13 @@ $student_count = $stmt->get_result()->fetch_assoc()['count'];
             <span>DigitalVillage</span>
         </div>
         <div class="nav-links">
-            <a href="../index.php">Home</a>
-            <a href="courses.php">Courses</a>
+            <a href="../index.php">Accueil</a>
+            <a href="courses.php">Cours</a>
             <span style="color: #333; font-weight: 500;">
                 <?php echo htmlspecialchars($_SESSION['username']); ?>
             </span>
-            <a href="../dashboard.php" class="btn-orange">Dashboard</a>
-            <a href="../logout.php" class="btn-outline">Logout</a>
+            <a href="../dashboard.php" class="btn-orange">Tableau de bord</a>
+            <a href="../logout.php" class="btn-outline">Déconnexion</a>
         </div>
     </nav>
 
@@ -368,7 +368,7 @@ $student_count = $stmt->get_result()->fetch_assoc()['count'];
                 <h1><?php echo htmlspecialchars($course['title']); ?></h1>
                 <div class="course-stats">
                     <span class="stat-item">👨‍🏫 <?php echo htmlspecialchars($course['teacher_name']); ?></span>
-                    <span class="stat-item">👥 <?php echo $student_count; ?> students</span>
+                    <span class="stat-item">👥 <?php echo $student_count; ?> étudiants</span>
                 </div>
             </div>
         </div>
@@ -376,26 +376,26 @@ $student_count = $stmt->get_result()->fetch_assoc()['count'];
         <div class="content-wrapper">
             <div class="stream">
                 <?php if($is_teacher): ?>
-                    <!-- Post Composer for Teachers -->
+                    <!-- Éditeur de publication pour les enseignants -->
                     <div class="post-composer">
-                        <h3>📢 Share with your class</h3>
+                        <h3>📢 Partager avec votre classe</h3>
                         <form method="POST">
-                            <input type="text" name="post_title" placeholder="Post title..." required>
-                            <textarea name="post_content" placeholder="Share an announcement, material, or resource..." required></textarea>
-                            <button type="submit" name="create_post" class="btn-post">Post to Class</button>
+                            <input type="text" name="post_title" placeholder="Titre de la publication..." required>
+                            <textarea name="post_content" placeholder="Partagez une annonce, un document ou une ressource..." required></textarea>
+                            <button type="submit" name="create_post" class="btn-post">Publier dans la classe</button>
                         </form>
                     </div>
                 <?php endif; ?>
 
-                <!-- Stream of Posts and Assignments -->
+                <!-- Flux des publications et devoirs -->
                 <?php if($stream_items->num_rows > 0): ?>
                     <?php while($item = $stream_items->fetch_assoc()): ?>
                         <div class="stream-item <?php echo $item['type']; ?>">
                             <div class="item-header">
                                 <span class="item-type <?php echo $item['type']; ?>">
-                                    <?php echo $item['type'] === 'assignment' ? '📝 Assignment' : '📢 Announcement'; ?>
+                                    <?php echo $item['type'] === 'assignment' ? '📝 Devoir' : '📢 Annonce'; ?>
                                 </span>
-                                <small><?php echo date('M j, Y - g:i A', strtotime($item['created_at'])); ?></small>
+                                <small><?php echo date('j M Y - H:i', strtotime($item['created_at'])); ?></small>
                             </div>
                             
                             <h3><?php echo htmlspecialchars($item['title']); ?></h3>
@@ -403,11 +403,11 @@ $student_count = $stmt->get_result()->fetch_assoc()['count'];
                             
                             <?php if($item['type'] === 'assignment'): ?>
                                 <div class="item-footer">
-                                    <span class="due-date">📅 Due: <?php echo date('M j, Y', strtotime($item['due_date'])); ?></span>
+                                    <span class="due-date">📅 À rendre le : <?php echo date('j M Y', strtotime($item['due_date'])); ?></span>
                                     <?php if($is_enrolled || $is_teacher): ?>
                                         <a href="../assignments/view_assignment.php?id=<?php echo $item['id']; ?>" 
                                            style="color: #27ae60; text-decoration: none; font-weight: bold;">
-                                            View Assignment →
+                                            Voir le devoir →
                                         </a>
                                     <?php endif; ?>
                                 </div>
@@ -417,8 +417,8 @@ $student_count = $stmt->get_result()->fetch_assoc()['count'];
                 <?php else: ?>
                     <div class="empty-stream">
                         <div class="empty-stream-icon">📭</div>
-                        <h2>No posts yet</h2>
-                        <p>The class stream is empty. <?php echo $is_teacher ? 'Be the first to post something!' : 'Check back later for updates.'; ?></p>
+                        <h2>Aucune publication pour le moment</h2>
+                        <p>Le flux de la classe est vide. <?php echo $is_teacher ? 'Soyez le premier à publier quelque chose !' : 'Revenez plus tard pour voir les mises à jour.'; ?></p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -426,12 +426,12 @@ $student_count = $stmt->get_result()->fetch_assoc()['count'];
             <div class="sidebar">
                 <?php if($role === 'student'): ?>
                     <div class="sidebar-card">
-                        <h3>Enrollment</h3>
+                        <h3>Inscription</h3>
                         <?php if($is_enrolled): ?>
-                            <button class="action-btn btn-enrolled">✓ Enrolled</button>
+                            <button class="action-btn btn-enrolled">✓ Inscrit(e)</button>
                         <?php else: ?>
                             <form method="POST">
-                                <button type="submit" name="enroll" class="action-btn">Join Class</button>
+                                <button type="submit" name="enroll" class="action-btn">Rejoindre la classe</button>
                             </form>
                         <?php endif; ?>
                     </div>
@@ -439,20 +439,20 @@ $student_count = $stmt->get_result()->fetch_assoc()['count'];
 
                 <?php if($is_teacher): ?>
                     <div class="sidebar-card">
-                        <h3>Quick Actions</h3>
+                        <h3>Actions rapides</h3>
                         <a href="../assignments/create_assignment.php?course_id=<?php echo $course_id; ?>" class="action-btn">
-                            + New Assignment
+                            + Nouveau devoir
                         </a>
                         <a href="upload_material.php?course_id=<?php echo $course_id; ?>" class="action-btn">
-                            📎 Upload File
+                            📎 Téléverser un fichier
                         </a>
                     </div>
                 <?php endif; ?>
 
                 <div class="sidebar-card">
-                    <h3>About Course</h3>
+                    <h3>À propos du cours</h3>
                     <p style="color: #666; line-height: 1.6;">
-                        <?php echo htmlspecialchars($course['description'] ?: 'No description available'); ?>
+                        <?php echo htmlspecialchars($course['description'] ?: 'Aucune description disponible'); ?>
                     </p>
                 </div>
             </div>

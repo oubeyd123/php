@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Check if user is logged in
+// Vérifier si l'utilisateur est connecté
 if(!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
@@ -12,7 +12,7 @@ require_once '../database.php';
 $user_id = $_SESSION['user_id'];
 $role = $_SESSION['role'];
 
-// Get all courses with teacher information
+// Récupérer tous les cours avec les informations des enseignants
 $query = "SELECT c.*, u.username as teacher_name,
           (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as student_count
           FROM courses c 
@@ -22,11 +22,11 @@ $query = "SELECT c.*, u.username as teacher_name,
 $result = $conn->query($query);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Courses - DigitalVillage</title>
+    <title>Tous les cours - DigitalVillage</title>
     <link rel="stylesheet" href="../style.css">
     <style>
         .page-container {
@@ -157,7 +157,7 @@ $result = $conn->query($query);
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Barre de navigation -->
     <nav class="navbar">
         <div class="logo">
             <p class="logo-spc">👩‍🏫</p>
@@ -165,23 +165,23 @@ $result = $conn->query($query);
         </div>
 
         <div class="nav-links">
-            <a href="../index.php">Home</a>
+            <a href="../index.php">Accueil</a>
             <span style="color: #333; font-weight: 500;">
                 <?php echo htmlspecialchars($_SESSION['username']); ?>
             </span>
-            <a href="../dashboard.php" class="btn-orange">Dashboard</a>
-            <a href="../logout.php" class="btn-outline">Logout</a>
+            <a href="../dashboard.php" class="btn-orange">Tableau de bord</a>
+            <a href="../logout.php" class="btn-outline">Déconnexion</a>
         </div>
     </nav>
 
     <div class="page-container">
         <div class="page-header">
             <div>
-                <h1>All Courses</h1>
-                <p style="color: #666; margin-top: 5px;">Browse available courses</p>
+                <h1>Tous les cours</h1>
+                <p style="color: #666; margin-top: 5px;">Parcourez les cours disponibles</p>
             </div>
             <?php if($role === 'teacher'): ?>
-                <a href="create_course.php" class="btn-orange">+ Create Course</a>
+                <a href="create_course.php" class="btn-orange">+ Créer un cours</a>
             <?php endif; ?>
         </div>
 
@@ -191,15 +191,15 @@ $result = $conn->query($query);
                     <div class="course-card">
                         <span class="course-code"><?php echo htmlspecialchars($course['course_code']); ?></span>
                         <h3><?php echo htmlspecialchars($course['title']); ?></h3>
-                        <p><?php echo htmlspecialchars($course['description'] ?: 'No description available'); ?></p>
+                        <p><?php echo htmlspecialchars($course['description'] ?: 'Aucune description disponible'); ?></p>
                         
                         <div class="course-meta">
                             <span class="teacher-name">👨‍🏫 <?php echo htmlspecialchars($course['teacher_name']); ?></span>
-                            <span class="student-count">👥 <?php echo $course['student_count']; ?> students</span>
+                            <span class="student-count">👥 <?php echo $course['student_count']; ?> étudiants</span>
                         </div>
                         
                         <a href="view_course.php?id=<?php echo $course['id']; ?>" class="btn-view">
-                            View Course →
+                            Voir le cours →
                         </a>
                     </div>
                 <?php endwhile; ?>
@@ -207,10 +207,10 @@ $result = $conn->query($query);
         <?php else: ?>
             <div class="empty-state">
                 <div class="empty-state-icon">📚</div>
-                <h2>No Courses Yet</h2>
-                <p>There are no courses available at the moment.</p>
+                <h2>Aucun cours pour le moment</h2>
+                <p>Il n'y a aucun cours disponible actuellement.</p>
                 <?php if($role === 'teacher'): ?>
-                    <a href="create_course.php" class="btn-orange">Create Your First Course</a>
+                    <a href="create_course.php" class="btn-orange">Créer votre premier cours</a>
                 <?php endif; ?>
             </div>
         <?php endif; ?>

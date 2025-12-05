@@ -19,7 +19,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     
     // Validate inputs
     if(empty($email) || empty($password)) {
-        $error = "Please fill in all fields.";
+        $error = "Veuillez remplir tous les champs.";
     } else {
         // Prepare statement to prevent SQL injection
         $stmt = $conn->prepare("SELECT id, username, email, password, role FROM users WHERE email = ?");
@@ -41,21 +41,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
                 header("Location: dashboard.php");
                 exit();
             } else {
-                $error = "Invalid email or password.";
+                $error = "Adresse e-mail ou mot de passe incorrect.";
             }
         } else {
-            $error = "Invalid email or password.";
+            $error = "Adresse e-mail ou mot de passe incorrect.";
         }
         $stmt->close();
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - DigitalVillage</title>
+    <title>Connexion - DigitalVillage</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .auth-container {
@@ -180,38 +180,38 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 <body>
     <div class="auth-container">
         <div class="auth-box">
-            <h2>👩‍🏫 Welcome Back</h2>
-            <p>Sign in to your DigitalVillage account</p>
+            <h2>👩‍🏫 Bon retour</h2>
+            <p>Connectez-vous à votre compte DigitalVillage</p>
             
             <?php if($error): ?>
                 <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
             
             <?php if(isset($_GET['registered'])): ?>
-                <div class="alert alert-success">Registration successful! Please sign in.</div>
+                <div class="alert alert-success">Inscription réussie ! Vous pouvez maintenant vous connecter.</div>
             <?php endif; ?>
             
             <form method="POST" action="">
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="email">Adresse e-mail</label>
                     <input type="email" id="email" name="email" required 
                            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">Mot de passe</label>
                     <input type="password" id="password" name="password" required>
                 </div>
                 
-                <button type="submit" name="login" class="btn-submit">Sign In</button>
+                <button type="submit" name="login" class="btn-submit">Se connecter</button>
             </form>
             
             <div class="auth-links">
-                Don't have an account? <a href="register.php">Sign Up</a>
+                Pas encore de compte ? <a href="register.php">Créer un compte</a>
             </div>
             
             <div class="back-home">
-                <a href="index.php">← Back to Home</a>
+                <a href="index.php">← Retour à l'accueil</a>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Check if user is logged in and is a teacher
+// Vérifier si l'utilisateur est connecté et est un professeur
 if(!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
     header("Location: ../login.php");
     exit();
@@ -12,37 +12,37 @@ require_once '../database.php';
 $error = '';
 $success = '';
 
-// Handle course creation
+// Gérer la création de cours
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_course'])) {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
     $course_code = strtoupper(trim($_POST['course_code']));
     $teacher_id = $_SESSION['user_id'];
     
-    // Validate inputs
+    // Valider les entrées
     if(empty($title) || empty($course_code)) {
-        $error = "Course title and code are required.";
+        $error = "Le titre et le code du cours sont obligatoires.";
     } else {
-        // Check if course code already exists
+        // Vérifier si le code de cours existe déjà
         $stmt = $conn->prepare("SELECT id FROM courses WHERE course_code = ?");
         $stmt->bind_param("s", $course_code);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if($result->num_rows > 0) {
-            $error = "This course code already exists. Please use a different code.";
+            $error = "Ce code de cours existe déjà. Veuillez utiliser un code différent.";
         } else {
-            // Insert new course
+            // Insérer le nouveau cours
             $stmt = $conn->prepare("INSERT INTO courses (title, description, course_code, teacher_id, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->bind_param("sssi", $title, $description, $course_code, $teacher_id);
             
             if($stmt->execute()) {
-                $success = "Course created successfully!";
+                $success = "Cours créé avec succès !";
                 $course_id = $stmt->insert_id;
-                // Redirect to course view after 2 seconds
+                // Rediriger vers la vue du cours après 2 secondes
                 header("refresh:2;url=view_course.php?id=" . $course_id);
             } else {
-                $error = "Failed to create course. Please try again.";
+                $error = "Échec de la création du cours. Veuillez réessayer.";
             }
         }
         $stmt->close();
@@ -50,11 +50,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_course'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Course - DigitalVillage</title>
+    <title>Créer un Cours - DigitalVillage</title>
     <link rel="stylesheet" href="../style.css">
     <style>
         .page-container {
@@ -189,7 +189,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_course'])) {
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Barre de navigation -->
     <nav class="navbar">
         <div class="logo">
             <p class="logo-spc">👩‍🏫</p>
@@ -197,19 +197,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_course'])) {
         </div>
 
         <div class="nav-links">
-            <a href="../index.php">Home</a>
+            <a href="../index.php">Accueil</a>
             <span style="color: #333; font-weight: 500;">
                 <?php echo htmlspecialchars($_SESSION['username']); ?>
             </span>
-            <a href="../dashboard.php" class="btn-orange">Dashboard</a>
-            <a href="../logout.php" class="btn-outline">Logout</a>
+            <a href="../dashboard.php" class="btn-orange">Tableau de bord</a>
+            <a href="../logout.php" class="btn-outline">Déconnexion</a>
         </div>
     </nav>
 
     <div class="page-container">
         <div class="page-header">
-            <h1>Create New Course</h1>
-            <p>Set up a new course for your students</p>
+            <h1>Créer un Nouveau Cours</h1>
+            <p>Configurez un nouveau cours pour vos étudiants</p>
         </div>
 
         <div class="form-card">
@@ -218,37 +218,37 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_course'])) {
             <?php endif; ?>
             
             <?php if($success): ?>
-                <div class="alert alert-success"><?php echo htmlspecialchars($success); ?> Redirecting...</div>
+                <div class="alert alert-success"><?php echo htmlspecialchars($success); ?> Redirection en cours...</div>
             <?php endif; ?>
 
             <form method="POST" action="">
                 <div class="form-group">
-                    <label for="title">Course Title *</label>
+                    <label for="title">Titre du Cours *</label>
                     <input type="text" id="title" name="title" required 
-                           placeholder="e.g., Introduction to Computer Science"
+                           placeholder="ex: Introduction à l'Informatique"
                            value="<?php echo isset($_POST['title']) ? htmlspecialchars($_POST['title']) : ''; ?>">
                 </div>
 
                 <div class="form-group">
-                    <label for="course_code">Course Code *</label>
+                    <label for="course_code">Code du Cours *</label>
                     <input type="text" id="course_code" name="course_code" required 
-                           placeholder="e.g., CS101"
+                           placeholder="ex: INFO101"
                            value="<?php echo isset($_POST['course_code']) ? htmlspecialchars($_POST['course_code']) : ''; ?>">
-                    <small>A unique identifier for your course (letters and numbers only)</small>
+                    <small>Un identifiant unique pour votre cours (lettres et chiffres uniquement)</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="description">Course Description</label>
+                    <label for="description">Description du Cours</label>
                     <textarea id="description" name="description" 
-                              placeholder="Describe what students will learn in this course..."><?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?></textarea>
-                    <small>Optional: Add details about topics, prerequisites, and learning objectives</small>
+                              placeholder="Décrivez ce que les étudiants apprendront dans ce cours..."><?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?></textarea>
+                    <small>Optionnel : Ajoutez des détails sur les sujets, prérequis et objectifs d'apprentissage</small>
                 </div>
 
                 <div class="btn-group">
                     <button type="submit" name="create_course" class="btn-submit">
-                        ✓ Create Course
+                        ✓ Créer le Cours
                     </button>
-                    <a href="../dashboard.php" class="btn-cancel">Cancel</a>
+                    <a href="../dashboard.php" class="btn-cancel">Annuler</a>
                 </div>
             </form>
         </div>

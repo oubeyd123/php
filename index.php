@@ -6,11 +6,11 @@ $is_logged_in = isset($_SESSION['user_id']) && isset($_SESSION['username']);
 $username = $is_logged_in ? $_SESSION['username'] : '';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DigitalVillage - Your Independent Learning Platform</title>
+    <title>DigitalVillage - Votre plateforme d’apprentissage indépendante</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -25,13 +25,13 @@ $username = $is_logged_in ? $_SESSION['username'] : '';
         <div class="nav-links">
             <?php if($is_logged_in): ?>
                 <span style="color: #333; font-weight: 500;">
-                    Welcome, <?php echo htmlspecialchars($username); ?>
+                    Bienvenue, <?php echo htmlspecialchars($username); ?>
                 </span>
-                <a href="dashboard.php" class="btn-orange">Dashboard</a>
-                <a href="logout.php" class="btn-outline">Logout</a>
+                <a href="dashboard.php" class="btn-orange">Tableau de bord</a>
+                <a href="logout.php" class="btn-outline">Se déconnecter</a>
             <?php else: ?>
-                <a href="login.php">Sign In</a>
-                <a href="login.php" class="btn-orange">Get Started</a>
+                <a href="login.php">Se connecter</a>
+                <a href="login.php" class="btn-orange">Commencer</a>
             <?php endif; ?>
         </div>
     </nav>
@@ -40,21 +40,22 @@ $username = $is_logged_in ? $_SESSION['username'] : '';
     <section class="body">
         <div class="body-content">
             <h1>
-                Empowering Schools to<br>
-                <span class="gradient-text">Resist Big Tech</span>
+                Donner aux écoles le pouvoir de<br>
+                <span class="gradient-text">Résister aux GAFAM</span>
             </h1>
             <p>
-                Join our initiative to give schools the tools to create, manage, and control 
-                their own digital classrooms. Keep students' data safe and independent from big corporations.
+                Rejoignez notre initiative pour offrir aux écoles les outils nécessaires pour créer,
+                gérer et contrôler leurs propres classes numériques. Gardez les données des élèves
+                en sécurité et indépendantes des grandes entreprises technologiques.
             </p>
 
             <div class="body-btns">
                 <?php if($is_logged_in): ?>
-                    <a href="dashboard.php" class="btn-orange">Go to Dashboard →</a>
-                    <a href="courses.php" class="btn-outline">Browse Courses</a>
+                    <a href="dashboard.php" class="btn-orange">Aller au tableau de bord →</a>
+                    <a href="courses.php" class="btn-outline">Voir les cours</a>
                 <?php else: ?>
-                    <a href="login.php" class="btn-orange">Start Your Classroom →</a>
-                    <a href="#how-we-help" class="btn-outline">Learn More</a>
+                    <a href="login.php" class="btn-orange">Créer votre classe →</a>
+                    <a href="#how-we-help" class="btn-outline">En savoir plus</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -63,10 +64,11 @@ $username = $is_logged_in ? $_SESSION['username'] : '';
     <!-- How We Help Section -->
     <section class="Help" id="how-we-help">
         <div class="Help-content">
-            <h1>How We Help</h1>
+            <h1>Comment nous aidons</h1>
             <p>
-                Our platform empowers schools to build their own digital ecosystem, 
-                control their data, and provide students with a safe, independent learning environment.
+                Notre plateforme aide les écoles à construire leur propre écosystème numérique,
+                à contrôler leurs données et à offrir aux élèves un environnement
+                d’apprentissage sûr et indépendant.
             </p>
         </div>
     </section>
@@ -75,26 +77,28 @@ $username = $is_logged_in ? $_SESSION['username'] : '';
     <section class="features">
         <div class="feature-card">
             <div style="font-size:60px;">📚</div>
-            <h3>Create Courses</h3>
+            <h3>Créer des cours</h3>
             <p>
-                Teachers can create and share courses directly in the local system, 
-                without relying on external services.
+                Les enseignants peuvent créer et partager des cours directement dans le système local,
+                sans dépendre de services externes.
             </p>
         </div>
 
         <div class="feature-card">
             <div style="font-size:60px;">📝</div>
-            <h3>Manage Assignments</h3>
+            <h3>Gérer les devoirs</h3>
             <p>
-                Assign homework, collect submissions, and provide grades — all within your school's own server.
+                Donnez des devoirs, collectez les rendus et attribuez des notes — 
+                le tout depuis le serveur de votre école.
             </p>
         </div>
 
         <div class="feature-card">
             <div style="font-size:60px;">🔒</div>
-            <h3>Protect Data</h3>
+            <h3>Protéger les données</h3>
             <p>
-                Keep all student and teacher data local, secure, and independent from Big Tech platforms.
+                Gardez toutes les données des élèves et enseignants locales, sécurisées
+                et indépendantes des plateformes des GAFAM.
             </p>
         </div>
     </section>
@@ -104,33 +108,33 @@ $username = $is_logged_in ? $_SESSION['username'] : '';
         <div class="footer-grid">
             <div>
                 <h2 class="footer-logo">DigitalVillage</h2>
-                <p>Building independent, resilient digital classrooms for schools.</p>
+                <p>Construire des classes numériques indépendantes et résilientes pour les écoles.</p>
             </div>
 
             <div>
-                <h4>Platform</h4>
-                <a href="index.php">Home</a>
-                <a href="courses.php">Courses</a>
-                <a href="assignments.php">Assignments</a>
-                <a href="dashboard.php">Dashboard</a>
+                <h4>Plateforme</h4>
+                <a href="index.php">Accueil</a>
+                <a href="courses.php">Cours</a>
+                <a href="assignments.php">Devoirs</a>
+                <a href="dashboard.php">Tableau de bord</a>
             </div>
 
             <div>
-                <h4>Community</h4>
-                <a href="#">About Us</a>
+                <h4>Communauté</h4>
+                <a href="#">À propos</a>
                 <a href="#">Support</a>
-                <a href="#">Schools</a>
-                <a href="#">Events</a>
+                <a href="#">Écoles</a>
+                <a href="#">Événements</a>
             </div>
 
             <div>
-                <h4>Legal</h4>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+                <h4>Légal</h4>
+                <a href="#">Politique de confidentialité</a>
+                <a href="#">Conditions d’utilisation</a>
             </div>
         </div>
 
-        <p class="footer-bottom">© 2025 DigitalVillage — All Rights Reserved</p>
+        <p class="footer-bottom">© 2025 DigitalVillage — Tous droits réservés</p>
     </footer>
 
 </body>

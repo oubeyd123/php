@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// If already logged in, redirect to dashboard
+// Si déjà connecté, rediriger vers le tableau de bord
 if(isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit();
@@ -12,37 +12,37 @@ require_once 'database.php';
 $error = '';
 $success = '';
 
-// Handle registration form submission
+// Gérer la soumission du formulaire d'inscription
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    $role = $_POST['role']; // 'student' or 'teacher'
+    $role = $_POST['role']; // 'student' ou 'teacher'
     
-    // Validate inputs
+    // Valider les entrées
     if(empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
-        $error = "Please fill in all fields.";
+        $error = "Veuillez remplir tous les champs.";
     } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Please enter a valid email address.";
+        $error = "Veuillez entrer une adresse email valide.";
     } elseif(strlen($password) < 6) {
-        $error = "Password must be at least 6 characters long.";
+        $error = "Le mot de passe doit contenir au moins 6 caractères.";
     } elseif($password !== $confirm_password) {
-        $error = "Passwords do not match.";
+        $error = "Les mots de passe ne correspondent pas.";
     } else {
-        // Check if email already exists
+        // Vérifier si l'email existe déjà
         $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if($result->num_rows > 0) {
-            $error = "This email is already registered.";
+            $error = "Cet email est déjà enregistré.";
         } else {
-            // Hash password
+            // Hacher le mot de passe
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             
-            // Insert new user
+            // Insérer le nouvel utilisateur
             $stmt = $conn->prepare("INSERT INTO users (username, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->bind_param("ssss", $username, $email, $hashed_password, $role);
             
@@ -50,7 +50,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                 header("Location: login.php?registered=1");
                 exit();
             } else {
-                $error = "Registration failed. Please try again.";
+                $error = "L'inscription a échoué. Veuillez réessayer.";
             }
         }
         $stmt->close();
@@ -58,11 +58,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - DigitalVillage</title>
+    <title>Inscription - DigitalVillage</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .auth-container {
@@ -217,8 +217,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 <body>
     <div class="auth-container">
         <div class="auth-box">
-            <h2>👩‍🏫 Join DigitalVillage</h2>
-            <p>Create your account and start learning</p>
+            <h2>👩‍🏫 Rejoindre DigitalVillage</h2>
+            <p>Créez votre compte et commencez à apprendre</p>
             
             <?php if($error): ?>
                 <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
@@ -226,52 +226,52 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             
             <form method="POST" action="">
                 <div class="form-group">
-                    <label for="username">Full Name</label>
+                    <label for="username">Nom complet</label>
                     <input type="text" id="username" name="username" required 
                            value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="email">Adresse email</label>
                     <input type="email" id="email" name="email" required 
                            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Password (min. 6 characters)</label>
+                    <label for="password">Mot de passe (min. 6 caractères)</label>
                     <input type="password" id="password" name="password" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="confirm_password">Confirm Password</label>
+                    <label for="confirm_password">Confirmer le mot de passe</label>
                     <input type="password" id="confirm_password" name="confirm_password" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>I am a:</label>
+                    <label>Je suis :</label>
                     <div class="role-selector">
                         <div class="role-option">
                             <input type="radio" id="student" name="role" value="student" 
                                    <?php echo (!isset($_POST['role']) || $_POST['role'] == 'student') ? 'checked' : ''; ?>>
-                            <label for="student">🎓 Student</label>
+                            <label for="student">🎓 Étudiant(e)</label>
                         </div>
                         <div class="role-option">
                             <input type="radio" id="teacher" name="role" value="teacher" 
                                    <?php echo (isset($_POST['role']) && $_POST['role'] == 'teacher') ? 'checked' : ''; ?>>
-                            <label for="teacher">👨‍🏫 Teacher</label>
+                            <label for="teacher">👨‍🏫 Enseignant(e)</label>
                         </div>
                     </div>
                 </div>
                 
-                <button type="submit" name="register" class="btn-submit">Create Account</button>
+                <button type="submit" name="register" class="btn-submit">Créer un compte</button>
             </form>
             
             <div class="auth-links">
-                Already have an account? <a href="login.php">Sign In</a>
+                Vous avez déjà un compte ? <a href="login.php">Se connecter</a>
             </div>
             
             <div class="back-home">
-                <a href="index.php">← Back to Home</a>
+                <a href="index.php">← Retour à l'accueil</a>
             </div>
         </div>
     </div>
