@@ -6,7 +6,7 @@ if(!isset($_SESSION['user_id'])) {
     exit();
 }
 
-require_once '../config/database.php';
+require_once '../database.php';
 
 $user_id = $_SESSION['user_id'];
 $role = $_SESSION['role'];
